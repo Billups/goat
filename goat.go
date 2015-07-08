@@ -3,7 +3,7 @@ package goat
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/dimfeld/httptreemux"
 )
 
 // New creates a new Router and returns it
@@ -11,8 +11,8 @@ func New() *Router {
 	r := &Router{}
 	r.index = make(map[string]string)
 	r.prefix = "/"
-	r.router = httprouter.New()
-	r.router.NotFound = http.HandlerFunc(r.notFoundHandler)
+	r.router = httptreemux.New()
+	r.router.NotFoundHandler = http.HandlerFunc(r.notFoundHandler)
 
 	return r
 }
