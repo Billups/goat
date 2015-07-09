@@ -3,7 +3,7 @@ package goat
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/dimfeld/httptreemux"
 )
 
 // Router represents a router
@@ -19,7 +19,7 @@ type Router struct {
 	index map[string]string
 
 	// The router
-	router *httprouter.Router
+	router *httptreemux.TreeMux
 
 	// Middleware
 	middleware []Middleware
@@ -43,7 +43,7 @@ func (r *Router) Subrouter(path string) *Router {
 	return sr
 }
 
-// addRoute adds a route to the index and passes it over to the httprouter
+// addRoute adds a route to the index and passes it over to the httptreemux
 func (r *Router) addRoute(m, p, t string, fn Handle) {
 
 	path := r.subPath(p)
@@ -55,8 +55,8 @@ func (r *Router) addRoute(m, p, t string, fn Handle) {
 	}
 
 	// Wrapper function to bypass the parameter problem
-	wf := func(w http.ResponseWriter, req *http.Request, p httprouter.Params) {
-		fn(w, req, paramsFromHTTPRouter(p))
+	wf := func(w http.ResponseWriter, req *http.Request, p map[string]string) {
+		fn(w, req, p)
 	}
 
 	r.router.Handle(m, path, wf)
